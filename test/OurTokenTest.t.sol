@@ -45,10 +45,10 @@ contract OurTokenTest is Test {
 
     function testTransferSuccess() public {
         uint256 transferAmount = 50 ether;
-        
+
         vm.prank(bob);
         bool success = ourToken.transfer(alice, transferAmount);
-        
+
         assertTrue(success);
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
         assertEq(ourToken.balanceOf(alice), transferAmount);
@@ -56,11 +56,11 @@ contract OurTokenTest is Test {
 
     function testTransferInsufficientBalance() public {
         uint256 transferAmount = STARTING_BALANCE + 1 ether;
-        
+
         vm.prank(bob);
         vm.expectRevert();
         ourToken.transfer(alice, transferAmount);
-        
+
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE);
         assertEq(ourToken.balanceOf(alice), 0);
     }
@@ -68,7 +68,7 @@ contract OurTokenTest is Test {
     function testTransferZeroAmount() public {
         vm.prank(bob);
         bool success = ourToken.transfer(alice, 0);
-        
+
         assertTrue(success);
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE);
         assertEq(ourToken.balanceOf(alice), 0);
@@ -98,10 +98,10 @@ contract OurTokenTest is Test {
 
     function testApproveAndCheckAllowance() public {
         uint256 allowanceAmount = 5000;
-        
+
         vm.prank(bob);
         bool success = ourToken.approve(alice, allowanceAmount);
-        
+
         assertTrue(success);
         assertEq(ourToken.allowance(bob, alice), allowanceAmount);
     }
@@ -109,10 +109,10 @@ contract OurTokenTest is Test {
     function testTransferFromInsufficientAllowance() public {
         uint256 allowanceAmount = 1000;
         uint256 transferAmount = 1500;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowanceAmount);
-        
+
         vm.prank(alice);
         vm.expectRevert();
         ourToken.transferFrom(bob, charlie, transferAmount);
@@ -120,10 +120,10 @@ contract OurTokenTest is Test {
 
     function testTransferFromInsufficientBalance() public {
         uint256 allowanceAmount = STARTING_BALANCE + 1 ether;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowanceAmount);
-        
+
         vm.prank(alice);
         vm.expectRevert();
         ourToken.transferFrom(bob, charlie, allowanceAmount);
@@ -137,10 +137,10 @@ contract OurTokenTest is Test {
 
     function testTransferFromToZeroAddress() public {
         uint256 allowanceAmount = 1000;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowanceAmount);
-        
+
         vm.prank(alice);
         vm.expectRevert();
         ourToken.transferFrom(bob, address(0), 500);
@@ -150,62 +150,62 @@ contract OurTokenTest is Test {
         uint256 initialAllowance = 2000;
         uint256 transferAmount1 = 700;
         uint256 transferAmount2 = 300;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, initialAllowance);
-        
+
         vm.prank(alice);
         ourToken.transferFrom(bob, charlie, transferAmount1);
-        
+
         assertEq(ourToken.allowance(bob, alice), initialAllowance - transferAmount1);
-        
+
         vm.prank(alice);
         ourToken.transferFrom(bob, charlie, transferAmount2);
-        
+
         assertEq(ourToken.allowance(bob, alice), initialAllowance - transferAmount1 - transferAmount2);
     }
 
     function testSelfTransfer() public {
         uint256 transferAmount = 10 ether;
         uint256 initialBalance = ourToken.balanceOf(bob);
-        
+
         vm.prank(bob);
         bool success = ourToken.transfer(bob, transferAmount);
-        
+
         assertTrue(success);
         assertEq(ourToken.balanceOf(bob), initialBalance);
     }
 
     function testSelfTransferFromWithAllowance() public {
         uint256 allowanceAmount = 1000;
-        
+
         vm.prank(bob);
         ourToken.approve(bob, allowanceAmount);
-        
+
         vm.prank(bob);
         ourToken.transferFrom(bob, bob, 500);
-        
+
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE);
         assertEq(ourToken.allowance(bob, bob), allowanceAmount - 500);
     }
 
     function testTransferAllBalance() public {
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE);
-        
+
         vm.prank(bob);
         ourToken.transfer(alice, STARTING_BALANCE);
-        
+
         assertEq(ourToken.balanceOf(bob), 0);
         assertEq(ourToken.balanceOf(alice), STARTING_BALANCE);
     }
 
     function testAllowanceResetToZero() public {
         uint256 allowanceAmount = 1000;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowanceAmount);
         assertEq(ourToken.allowance(bob, alice), allowanceAmount);
-        
+
         vm.prank(bob);
         ourToken.approve(alice, 0);
         assertEq(ourToken.allowance(bob, alice), 0);
@@ -214,13 +214,13 @@ contract OurTokenTest is Test {
     function testTransferFromWithExactAllowance() public {
         uint256 allowanceAmount = 500;
         uint256 transferAmount = allowanceAmount;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowanceAmount);
-        
+
         vm.prank(alice);
         ourToken.transferFrom(bob, alice, transferAmount);
-        
+
         assertEq(ourToken.balanceOf(alice), transferAmount);
         assertEq(ourToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
         assertEq(ourToken.allowance(bob, alice), 0);
@@ -229,11 +229,11 @@ contract OurTokenTest is Test {
     function testMultipleApprovals() public {
         uint256 allowance1 = 500;
         uint256 allowance2 = 300;
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowance1);
         assertEq(ourToken.allowance(bob, alice), allowance1);
-        
+
         vm.prank(bob);
         ourToken.approve(alice, allowance2);
         assertEq(ourToken.allowance(bob, alice), allowance2);
@@ -242,7 +242,7 @@ contract OurTokenTest is Test {
     // ============ ManualToken Tests ============
     function testManualTokenMetadata() public {
         manualToken = new ManualToken();
-        
+
         assertEq(manualToken.name(), "ManualToken");
         assertEq(manualToken.totalSupply(), 100 ether);
         assertEq(manualToken.decimals(), 18);
@@ -250,7 +250,7 @@ contract OurTokenTest is Test {
 
     function testManualTokenInitialBalance() public {
         manualToken = new ManualToken();
-        
+
         // Check initial balances are zero
         assertEq(manualToken.balanceOf(bob), 0);
         assertEq(manualToken.balanceOf(alice), 0);
@@ -258,7 +258,7 @@ contract OurTokenTest is Test {
 
     function testManualTokenTransfer() public {
         manualToken = new ManualToken();
-        
+
         // ManualToken doesn't have mint functionality, so we can't test transfers
         // This is more of a demonstration that the contract has issues
         assert(true);
